@@ -1,3 +1,11 @@
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.model.Bind;
+import com.github.dockerjava.api.model.HostConfig;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientBuilder;
+
 import java.io.IOException;
 
 /**
@@ -7,11 +15,38 @@ public class Test {
 
 
     public static void main(String[] args) throws IOException {
+        compute("darylgabrielwong/blender");
+    }
 
-        // 1. Nodes to keep track of current jobs and previous jobs, without keeping a copy of the job - just logs and records.
-        // 2. Nodes to generate credit score based on the success of completed jobs.
-        // 3. Nodes to have 60-second intervals to ping at Server for jobs.
-        // 4. Remote Computation of Job in Nodes ******
+    public static void compute (String application) throws IOException {
+
+        DefaultDockerClientConfig config =
+                DefaultDockerClientConfig.createDefaultConfigBuilder()
+                        .withRegistryEmail("darylgabrielwong@gmail.com")
+                        .withRegistryPassword("DWGabriel4")
+                        .withRegistryUrl("darylgabrielwong")
+                        .build();
+
+        final DockerClient dockerClient = DockerClientBuilder
+                .getInstance(config)
+                .build();
+
+        CreateContainerResponse container
+                = dockerClient.createContainerCmd("/bin/bash")
+                .withName("blender")
+                .withHostName("deviceID")
+                .withBinds(Bind.parse("C:\\Users\\Daryl Wong\\Desktop\\test:/test/"))
+                .withWorkingDir("C:\\Users\\Daryl Wong\\Desktop\\test\\blendertest.blend")
+                .withHostConfig(new HostConfig() {
+                    @JsonProperty("AutoRemove")
+                    public boolean autoRemove = true;
+                })
+                .exec();
+
+        dockerClient.startContainerCmd(container.getId()).exec();
+
+
+
 
 
     }

@@ -1,5 +1,10 @@
-import com.spotify.docker.client.DefaultDockerClient;
-import com.spotify.docker.client.DockerClient;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.model.Bind;
+import com.github.dockerjava.api.model.HostConfig;
+import com.github.dockerjava.core.DefaultDockerClientConfig;
+import com.github.dockerjava.core.DockerClientBuilder;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -27,14 +32,31 @@ public class Compute {
     public void computeTask(String application, String taskID) throws IOException { // Auto-fill and execute Docker command to render.
 
         // Docker Pull to initiate App container.
-        final DockerClient dockerClient = DefaultDockerClient.builder()
+        DefaultDockerClientConfig config =
+                DefaultDockerClientConfig.createDefaultConfigBuilder()
+                .withRegistryEmail("darylgabrielwong@gmail.com")
+                .withRegistryPassword("DWGabriel4")
+                .withRegistryUrl("darylgabrielwong")
                 .build();
 
-        try {
-            dockerClient.pull(application);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        final DockerClient dockerClient = DockerClientBuilder
+                .getInstance(config)
+                .build();
+
+        CreateContainerResponse container
+                = dockerClient.createContainerCmd("/bin/bash")
+                .withName("blender")
+                .withHostName("deviceID")
+                .withBinds(Bind.parse("C:\\Users\\Daryl Wong\\Desktop\\test:/test/"))
+                .withWorkingDir("C:\\Users\\Daryl Wong\\Desktop\\test\\blendertest.blend")
+                .withHostConfig(new HostConfig() {
+                    @JsonProperty("AutoRemove")
+                    public boolean autoRemove = true;
+                })
+                .exec();
+
+        dockerClient.startContainerCmd(container.getId()).exec();
+
 
         if (taskCache.listFiles().length <= 0) {
             System.out.println("There are no tasks to compute at this time.");
