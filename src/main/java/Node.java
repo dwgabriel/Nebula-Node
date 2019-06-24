@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,14 +31,38 @@ public class Node {
     String username;
     String deviceID;
     String taskID;
+    String application;
+
+    Compute computer = new Compute();
+
+    Map<String, String> taskAppMap = new LinkedHashMap<>();
+
+    // Node Compute - TaskCache to Compute App Info :
+    // How do we store information of Application and pass it from NodeServlet to Compute.
+
+    // Option 1 : Decide Application info based on Renderfile extension / file format                                   // LEAST PREFERRED
+    //          - PROS : No need for Application info to be transferred through headers
+    //          - CONS : If different applications share file formats, there will be discrepancies.
+
+    // Option 2 : Renderfile maintaining data when in taskcache for retrieval later                                     //
+    //          - PROS : High accuracy and consistency. Maintain Client selected information from end-to-end
+    //          - CONS : Unsure if it's possible or works ******
+
+    // Option 3 : HashMap of Subtask and Application info - Key : SubtaskID  |  Value : ApplicationInfo
+    //          - PROS : High accuracy and consistency. App information maintained within the same class.
+    //          - CONS : Added complexity. HashMap needs to continually add to the list of TaskID:Apps
+
 
 
 
     public static void main(String[] args) throws IOException {
 
         Node node = new Node("mrnode", "node123456");
-//        node.postStatus();
-        node.pingServer();
+        node.postStatus();
+        System.out.println(" POST CHECK ----------------------------------------------------");
+        node.printInfo();
+//        node.pingServer();
+
 //        node.postResults();
 
 
@@ -113,7 +139,7 @@ public class Node {
                 if (taskSize < 10) { // Needs optimal task Size **
                     System.out.println("Problem's here.");
                     String content = EntityUtils.toString(entity);
-                    System.out.println("Application : " + content);
+                    System.out.println("Content  : " + content);
 
                 } else {
 
@@ -124,11 +150,14 @@ public class Node {
 
                     String fileName = response.getFirstHeader("Content-Name").getValue();
                     taskID = response.getFirstHeader("Task-Identity").getValue();
-                    String application = response.getFirstHeader("Application").toString();
-
+                    application = response.getFirstHeader("Application").toString();
+                    System.out.println("--------------------------------- PRINT CHECK ---------------------------------");
                     System.out.println("File Name : " + fileName);
                     System.out.println("Task Identity : " + taskID);
-                    System.out.println(application);
+                    System.out.println("Application : " + application);
+                    System.out.println("--------------------------------- Task App Map --------------------------------");
+                    addInfo(taskID, application);
+                    printInfo();
 
                     File newFile = new File(taskCache, fileName);
                     taskCache.createNewFile();
@@ -148,6 +177,18 @@ public class Node {
         } finally {
             httpClient.close();
         }
+//        computer.computeTask(application, taskID);
+
+    }
+
+    public void addInfo(String taskID, String application) {
+        taskAppMap.put(taskID, application);
+    }
+
+    public void printInfo() {
+        taskAppMap.entrySet().forEach(entry -> {
+            System.out.println("TEST | " + entry.getKey() + " = " + entry.getValue());
+        });
     }
 
     public void postResults() throws IOException { // Returns computed results back to Server for merging and verification.

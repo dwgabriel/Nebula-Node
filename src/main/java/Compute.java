@@ -1,8 +1,6 @@
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.model.Bind;
-import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 
@@ -31,32 +29,24 @@ public class Compute {
 
     public void computeTask(String application, String taskID) throws IOException { // Auto-fill and execute Docker command to render.
 
-        // Docker Pull to initiate App container.
-        DefaultDockerClientConfig config =
-                DefaultDockerClientConfig.createDefaultConfigBuilder()
-                .withRegistryEmail("darylgabrielwong@gmail.com")
-                .withRegistryPassword("DWGabriel4")
-                .withRegistryUrl("darylgabrielwong")
+        // Creating Docker configurations, Docker Client and Docker Container to compute.
+        DefaultDockerClientConfig config                                                                                // Dccker Configurations : - Required for building private registry for Nebula DockerImages.
+                = DefaultDockerClientConfig.createDefaultConfigBuilder()
+                .withRegistryEmail("darylgabrielwong@gmail.com")                                                        // DockerHub Login Email
+                .withRegistryPassword("DWGabriel4")                                                                     // DockerHub Login Password
+                .withRegistryUsername("darylgabrielwong")                                                               // DockerHub username (DockerHub account registry name as well)
                 .build();
 
-        final DockerClient dockerClient = DockerClientBuilder
-                .getInstance(config)
-                .build();
+        DockerClient dockerClient = DockerClientBuilder.getInstance(config).build();                                    // Build Docker client to communicate with DockerHub,Server,Host,etc.
 
-        CreateContainerResponse container
-                = dockerClient.createContainerCmd("/bin/bash")
-                .withName("blender")
-                .withHostName("deviceID")
-                .withBinds(Bind.parse("C:\\Users\\Daryl Wong\\Desktop\\test:/test/"))
-                .withWorkingDir("C:\\Users\\Daryl Wong\\Desktop\\test\\blendertest.blend")
-                .withHostConfig(new HostConfig() {
-                    @JsonProperty("AutoRemove")
-                    public boolean autoRemove = true;
-                })
+        CreateContainerResponse container = dockerClient.createContainerCmd("ikester/blender")                       // Create Container with Image (Selected Application)
+                .withCmd("bin/bash")                                                                                    // Container start-up command
+                .withName("nodecompute")                                                                                // Name of container
+                .withBinds(Bind.parse("/c/Users/Daryl Wong/desktop/nebula/code/nebulanode/taskcache:/test/"))           // Mount-bind Volume - [Node Directory where Renderfile is Stored] : [Destination director where results will be Stored]
+                .withCmd("test/blendertest.blend", "-o", "test/frame_###", "-f", "1")                                   // Arguments passed to Application - Renderfile, naming of Results (frame_###), Selection of frame to render (-f)
                 .exec();
 
-        dockerClient.startContainerCmd(container.getId()).exec();
-
+        dockerClient.startContainerCmd(container.getId()).exec();                                                       // Start container.
 
         if (taskCache.listFiles().length <= 0) {
             System.out.println("There are no tasks to compute at this time.");
@@ -71,7 +61,6 @@ public class Compute {
 
                             try {
                                 BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
-
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
