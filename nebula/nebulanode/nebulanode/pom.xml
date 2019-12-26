@@ -12,7 +12,7 @@
     <name>nebula-node</name>
     <url>http://maven.apache.org</url>
     <properties>
-        <tomcat.version>8.5.38</tomcat.version>
+        <tomcat.version>9.0.30</tomcat.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
