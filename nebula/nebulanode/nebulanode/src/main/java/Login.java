@@ -1,13 +1,11 @@
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.sun.jndi.toolkit.url.Uri;
 import org.json.JSONException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
@@ -16,7 +14,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Login {
-
     private JPanel loginPanel;
     private JLabel userLabel;
     private JTextField userName;
@@ -34,6 +31,7 @@ public class Login {
     JFrame frame = new JFrame("Login");
     JDialog loginDialog = new JDialog(frame, "Login", Dialog.ModalityType.APPLICATION_MODAL);
     private JButton signUpButton;
+    private JLabel visitLink;
 
     public boolean run() {
         if (logged == false) {
@@ -41,7 +39,7 @@ public class Login {
             frame.pack();
             frame.setVisible(false);
 
-            loginDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+            loginDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
             loginDialog.add(loginPanel);
             loginDialog.pack();
             loginDialog.setLocationByPlatform(true);
@@ -50,7 +48,7 @@ public class Login {
         return logged;
     }
 
-    public Login() {
+    public Login(final String[] args) {
         loginDialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -69,13 +67,22 @@ public class Login {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (trial < 3) {
-                    user = userName.getText();
-                    pass = password.getText();
                     try {
-                        logged = login(user, pass);
-                        if (logged) {
-                            loginError.setText("You have successfully logged in.");
+                        if (args.length <= 0) {
+                            user = userName.getText();              //TODO - EDITS MADE HERE FOR BATCH ARGUMENTS
+                            pass = password.getText();
+                            logged = login(user, pass);
                         } else {
+                            logged = login(args[0], args[1]);
+                            user = args[0];
+                            pass = args[1];
+                        }
+                        if (logged) {
+                            System.out.println("You have successfully logged in.");
+                            loginError.setText("You have successfully logged in.");
+                            loginDialog.dispose();
+                        } else {
+                            System.out.println("Username or Password is incorrect.");
                             loginError.setText("Username or Password is incorrect.");
                         }
                     } catch (Exception exception) {
@@ -113,18 +120,24 @@ public class Login {
     public boolean login(String email, String password) throws IOException {
         boolean validAccount = false;
         String userData = "https://www.nebula.my/_functions/user/" + email + "/" + password;
-        String userdata = readFromURL(userData);
+        String dataVerify = readFromURL(userData);
 
-        if (userdata.contains("TRUE") && userdata.contains("FALSE")) {
+        if (dataVerify.contains("TRUE") && dataVerify.contains("FALSE")) {
             loginError.setText("Username or Password is incorrect.");
 
-        } else if (userdata.contains("TRUE") && !userdata.contains("FALSE")) {
+        } else if (dataVerify.contains("TRUE") && !dataVerify.contains("FALSE")) {
             validAccount = true;
             loginError.setText("");
 
-        } else if (userdata.contains("FALSE") && !userdata.contains("TRUE")) {
+        } else if (dataVerify.contains("FALSE") && !dataVerify.contains("TRUE")) {
             loginError.setText("Username doesn't exist.");
         }
+        return validAccount;
+    }
+
+    public boolean login(String[] args) throws IOException {   // TODO - EDITS MADE HERE FOR BATCH ARGUMENTS
+        boolean validAccount = login(args[0], args[1]);
+
         return validAccount;
     }
 
@@ -160,6 +173,14 @@ public class Login {
         return pass;
     }
 
+    public JButton getLoginButton() {
+        return loginButton;
+    }
+
+    public boolean getLoggedStatus() {
+        return logged;
+    }
+
     private void createUIComponents() {
         // TODO: place custom component creation code here
     }
@@ -180,33 +201,29 @@ public class Login {
      */
     private void $$$setupUI$$$() {
         loginPanel = new JPanel();
-        loginPanel.setLayout(new GridLayoutManager(5, 3, new Insets(20, 20, 20, 20), 50, 20));
+        loginPanel.setLayout(new GridLayoutManager(6, 3, new Insets(20, 20, 20, 20), 50, 20));
         loginPanel.setBackground(new Color(-15528407));
         loginPanel.setForeground(new Color(-1));
         loginPanel.setMinimumSize(new Dimension(675, 275));
         loginPanel.setPreferredSize(new Dimension(675, 275));
         intro = new JLabel();
-        Font introFont = this.$$$getFont$$$("Avenir", -1, 14, intro.getFont());
+        Font introFont = this.$$$getFont$$$("Segoe UI Light", -1, 14, intro.getFont());
         if (introFont != null) intro.setFont(introFont);
         intro.setForeground(new Color(-1));
         intro.setText("Please sign in to use Node.");
         loginPanel.add(intro, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        userName = new JTextField();
-        userName.setBackground(new Color(-1));
-        userName.setText("");
-        loginPanel.add(userName, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, -1), null, 0, false));
         password = new JPasswordField();
         password.setBackground(new Color(-1));
-        loginPanel.add(password, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(250, -1), null, 0, false));
+        loginPanel.add(password, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(275, -1), new Dimension(275, -1), 0, false));
         userLabel = new JLabel();
         userLabel.setBackground(new Color(-1));
-        Font userLabelFont = this.$$$getFont$$$("Avenir", -1, -1, userLabel.getFont());
+        Font userLabelFont = this.$$$getFont$$$("Segoe UI Light", -1, -1, userLabel.getFont());
         if (userLabelFont != null) userLabel.setFont(userLabelFont);
         userLabel.setForeground(new Color(-1));
         userLabel.setText("Username (Email)");
         loginPanel.add(userLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         passLabel = new JLabel();
-        Font passLabelFont = this.$$$getFont$$$("Avenir", -1, -1, passLabel.getFont());
+        Font passLabelFont = this.$$$getFont$$$("Segoe UI Light", -1, -1, passLabel.getFont());
         if (passLabelFont != null) passLabel.setFont(passLabelFont);
         passLabel.setForeground(new Color(-1));
         passLabel.setText("Password");
@@ -221,16 +238,26 @@ public class Login {
         signUpButton.setForeground(new Color(-15124111));
         signUpButton.setText("Sign Up");
         loginPanel.add(signUpButton, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        copyrightLabel = new JLabel();
-        Font copyrightLabelFont = this.$$$getFont$$$("Avenir", Font.BOLD | Font.ITALIC, 12, copyrightLabel.getFont());
-        if (copyrightLabelFont != null) copyrightLabel.setFont(copyrightLabelFont);
-        copyrightLabel.setForeground(new Color(-1));
-        copyrightLabel.setText("by Nebula Inc.");
-        loginPanel.add(copyrightLabel, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         loginError = new JLabel();
         loginError.setForeground(new Color(-4487636));
         loginError.setText("");
         loginPanel.add(loginError, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        copyrightLabel = new JLabel();
+        Font copyrightLabelFont = this.$$$getFont$$$("Segoe UI Light", Font.BOLD, 14, copyrightLabel.getFont());
+        if (copyrightLabelFont != null) copyrightLabel.setFont(copyrightLabelFont);
+        copyrightLabel.setForeground(new Color(-1));
+        copyrightLabel.setText("by Nebula Technologies.");
+        loginPanel.add(copyrightLabel, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        visitLink = new JLabel();
+        Font visitLinkFont = this.$$$getFont$$$("Segoe UI Light", Font.BOLD, 15, visitLink.getFont());
+        if (visitLinkFont != null) visitLink.setFont(visitLinkFont);
+        visitLink.setForeground(new Color(-1));
+        visitLink.setText("Visit us at https://www.nebula.my");
+        loginPanel.add(visitLink, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        userName = new JTextField();
+        userName.setBackground(new Color(-1));
+        userName.setText("");
+        loginPanel.add(userName, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(275, -1), new Dimension(275, -1), null, 0, false));
     }
 
     /**
