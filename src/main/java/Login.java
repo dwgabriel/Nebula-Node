@@ -78,11 +78,11 @@ public class Login {
                             pass = args[1];
                         }
                         if (logged) {
-                            System.out.println("You have successfully logged in.");
+                            System.out.println("[LOG] You have successfully logged in.");
                             loginError.setText("You have successfully logged in.");
                             loginDialog.dispose();
                         } else {
-                            System.out.println("Username or Password is incorrect.");
+                            System.out.println("[LOG] Username or Password is incorrect.");
                             loginError.setText("Username or Password is incorrect.");
                         }
                     } catch (Exception exception) {
