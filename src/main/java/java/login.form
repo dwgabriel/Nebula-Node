@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Login">
+  <grid id="27dc6" binding="loginPanel" layout-manager="GridLayoutManager" row-count="6" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="50" vgap="20">
+    <margin top="20" left="20" bottom="20" right="20"/>
+    <constraints>
+      <xy x="20" y="20" width="675" height="400"/>
+    </constraints>
+    <properties>
+      <background color="-15528407"/>
+      <foreground color="-1"/>
+      <minimumSize width="675" height="275"/>
+      <preferredSize width="675" height="275"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <component id="ae7b2" class="javax.swing.JLabel" binding="intro">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI Light" size="14"/>
+          <foreground color="-1"/>
+          <text value="Please sign in to use Node."/>
+        </properties>
+      </component>
+      <component id="b9210" class="javax.swing.JPasswordField" binding="password">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="275" height="-1"/>
+            <maximum-size width="275" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-1"/>
+        </properties>
+      </component>
+      <component id="ec13d" class="javax.swing.JLabel" binding="userLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-1"/>
+          <font name="Segoe UI Light"/>
+          <foreground color="-1"/>
+          <text value="Username (Email)"/>
+        </properties>
+      </component>
+      <component id="27515" class="javax.swing.JLabel" binding="passLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI Light"/>
+          <foreground color="-1"/>
+          <text value="Password"/>
+        </properties>
+      </component>
+      <component id="dcdf3" class="javax.swing.JButton" binding="loginButton">
+        <constraints>
+          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-1"/>
+          <foreground color="-15124111"/>
+          <text value="Login"/>
+        </properties>
+      </component>
+      <component id="bea40" class="javax.swing.JButton" binding="signUpButton" default-binding="true">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-1"/>
+          <foreground color="-15124111"/>
+          <text value="Sign Up"/>
+        </properties>
+      </component>
+      <component id="85783" class="javax.swing.JLabel" binding="loginError">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <foreground color="-4487636"/>
+          <text value=""/>
+        </properties>
+      </component>
+      <component id="148c5" class="javax.swing.JLabel" binding="copyrightLabel">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI Light" size="14" style="1"/>
+          <foreground color="-1"/>
+          <text value="by Nebula Technologies."/>
+        </properties>
+      </component>
+      <component id="7485" class="javax.swing.JLabel" binding="visitLink">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font name="Segoe UI Light" size="15" style="1"/>
+          <foreground color="-1"/>
+          <text value="Visit us at https://www.nebula.my"/>
+        </properties>
+      </component>
+      <component id="c25be" class="javax.swing.JTextField" binding="userName">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false">
+            <minimum-size width="275" height="-1"/>
+            <preferred-size width="275" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-1"/>
+          <text value=""/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>
